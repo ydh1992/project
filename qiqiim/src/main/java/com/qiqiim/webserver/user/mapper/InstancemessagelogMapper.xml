@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qiqiim.webserver.user.mapper.InstancemessagelogMapper">
+	<select id="selectLogList"  parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT a.id,a.sendUserId senduser,b.name sendusername ,a.context,
+		FROM_UNIXTIME(a.sendTime, '%Y-%c-%d %h:%i:%s' ) createdate
+		FROM  instancemessageday  a
+		<if test="param.types == 0">LEFT JOIN auth_user b ON b.uuid=a.sendUserId</if>
+		<if test="param.types == 1">LEFT JOIN auth_org b ON b.uuid=a.sendUserId</if>
+	   where ((a.sendUserId=#{param.sendUserId}  and a.recUserId=#{param.recUserId}) or (a.recUserId=#{param.sendUserId}  and a.sendUserId=#{param.recUserId}))
+		  order by a.id desc limit #{param.offset},#{param.limit}
+	</select>
+	<!-- 根据条件查询记录数 -->
+	<select id="countLog" resultType="java.lang.Integer"  parameterType="java.util.Map" >
+		select count(1) from instancemessagelog where ((sendUserId=#{param.sendUserId}  and recUserId=#{param.recUserId}) or (recUserId=#{param.sendUserId}  and sendUserId=#{param.recUserId}))
+	</select>
+</mapper>

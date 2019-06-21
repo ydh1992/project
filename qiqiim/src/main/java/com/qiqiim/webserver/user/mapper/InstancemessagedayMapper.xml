@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qiqiim.webserver.user.mapper.InstancemessagedayMapper">
+	<!-- 保存,保存不为NULL的字段 -->
+	<insert id="insertSelective" parameterType="com.qiqiim.webserver.user.model.Instancemessageday" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
+		INSERT INTO instancemessageday
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="sendUserId != null">`sendUserId`,</if>
+			<if test="recUserId != null">`recUserId`,</if>
+			<if test="sendTime != null">`sendTime`,</if>
+			<if test="isRead != null">`isRead`,</if>
+			<if test="context != null">`context`,</if>
+			<if test="msgType != null">`msgType`,</if>
+			<if test="Prepared1 != null">`Prepared1`,</if>
+			<if test="Prepared2 != null">`Prepared2`,</if>
+			<if test="Prepared3 != null">`Prepared3`,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="sendUserId != null">#{sendUserId,jdbcType=VARCHAR},</if>
+			<if test="recUserId != null">#{recUserId,jdbcType=VARCHAR},</if>
+			<if test="sendTime != null">#{sendTime,jdbcType=TIMESTAMP},</if>
+			<if test="isRead != null">#{isRead,jdbcType=CHAR},</if>
+			<if test="context != null">#{context,jdbcType=VARCHAR},</if>
+			<if test="msgType != null">#{msgType,jdbcType=CHAR},</if>
+			<if test="Prepared1 != null">#{Prepared1,jdbcType=VARCHAR},</if>
+			<if test="Prepared2 != null">#{Prepared2,jdbcType=VARCHAR},</if>
+			<if test="Prepared3 != null">#{Prepared3,jdbcType=VARCHAR},</if>
+		</trim>
+	</insert>
+	<!-- 根据指定条件更新不为NULL的字段 -->
+	<update id="updateByExampleSelective" parameterType="map">UPDATE instancemessageday t 
+		<set>
+			<if test="entity.sendUserId != null">sendUserId=#{entity.sendUserId,jdbcType=VARCHAR},</if>
+			<if test="entity.recUserId != null">recUserId=#{entity.recUserId,jdbcType=VARCHAR},</if>
+			<if test="entity.sendTime != null">sendTime=#{entity.sendTime,jdbcType=TIMESTAMP},</if>
+			<if test="entity.isRead != null">isRead=#{entity.isRead,jdbcType=CHAR},</if>
+			<if test="entity.context != null">context=#{entity.context,jdbcType=VARCHAR},</if>
+			<if test="entity.msgType != null">msgType=#{entity.msgType,jdbcType=CHAR},</if>
+			<if test="entity.Prepared1 != null">Prepared1=#{entity.Prepared1,jdbcType=VARCHAR},</if>
+			<if test="entity.Prepared2 != null">Prepared2=#{entity.Prepared2,jdbcType=VARCHAR},</if>
+			<if test="entity.Prepared3 != null">Prepared3=#{entity.Prepared3,jdbcType=VARCHAR},</if>
+		</set>
+		where id = #{entity.id,jdbcType=INTEGER}
+	</update>
+	<update id="updatemsgstate" >
+		update instancemessageday
+		<set>
+			isRead = 1
+		</set>
+		where recUserId = #{recUserId}
+	</update>
+
+	<select id="getOfflineMessageList" resultType="java.util.Map" >
+		SELECT
+		a.id,
+		a.sendUserId senduser,
+		b.name sendusername ,
+		a.context,
+		FROM_UNIXTIME(a.sendTime, '%Y-%c-%d %h:%i:%s' ) createdate
+		FROM  instancemessageday  a
+		<if test="types == 0">LEFT JOIN auth_user b ON b.uuid=a.sendUserId</if>
+		<if test="types == 1">LEFT JOIN auth_org b ON b.uuid=a.sendUserId</if>
+		WHERE a.recUserId =#{recUserId}  and  a.isRead=0   ORDER BY a.id
+	</select>
+
+	<!-- 批量保存-->
+	<insert id="insertList">
+		INSERT INTO instancemessageday (`sendUserId`,`recUserId`,`context`,`sendTime`,`isRead`,`msgType`) values
+		<foreach collection="entity" item="emp" separator=",">
+			(#{emp.sendUserId},#{emp.recUserId},#{emp.context},#{emp.sendTime},#{emp.isRead},#{emp.msgType})
+		</foreach>
+	</insert>
+
+</mapper>

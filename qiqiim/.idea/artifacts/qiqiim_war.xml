@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="qiqiim:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>qiqiim</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="qiqiim.war">
+      <element id="artifact" artifact-name="qiqiim:war exploded" />
+    </root>
+  </artifact>
+</component>
